@@ -5,10 +5,12 @@ import useUserProfile from "hooks/useUserProfile";
 
 
 
-const OverviewTabs = () => {
+const EmployerOverviewTabs = () => {
     const params = useParams();
 
 const { data, isLoading } = useUserProfile(params.id!);
+
+console.log(data, "DAAA")
 
 if (isLoading) return <p>Loading...</p>;
   return (
@@ -19,7 +21,7 @@ if (isLoading) return <p>Loading...</p>;
             <div className="card-body">
               <h6 className="mb-3 text-15">Overview</h6>
               <p className="mb-2 text-slate-500 dark:text-zink-200">
-                {data?.data?.mynda?.about}
+                {data?.data?.agency?.about}
               </p>
             </div>
           </div>
@@ -33,19 +35,37 @@ if (isLoading) return <p>Loading...</p>;
                   <tbody>
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Residential Address
+                        Address
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.address}
+                        {data?.data?.employer?.address}
                       </td>
                     </tr>
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        State of Origin
+                        Date of Birth
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.state}
+                        {data?.data?.employer?.dob && new Date(data?.data?.employer?.dob).toLocaleDateString()}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Gender
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.employer?.gender}
+                      </td>
+                    </tr>
+               
+
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        State
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.employer?.state}
                       </td>
                     </tr>
 
@@ -54,85 +74,37 @@ if (isLoading) return <p>Loading...</p>;
                         L . G .A
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.lga}
+                        {data?.data?.employer?.lga}
                       </td>
                     </tr>
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Sex
+                        NIN
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.gender}
+                       {data?.data?.employer?.nin && <a href={data?.data?.employer?.nin?.url} target="_blank">{data?.data?.employer?.nin?.name}</a>}
                       </td>
                     </tr>
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Height
+                        Utility Bill
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.height}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Category
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.occupation}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Date of birth
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.dob ? new Date(data?.data?.mynda?.dob).toLocaleDateString() : ""}
+                       {data?.data?.employer?.utilityBill && <a href={data?.data?.employer?.utilityBill?.url} target="_blank">{data?.data?.employer?.utilityBill?.name}</a>}
                       </td>
                     </tr>
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Religion
+                        Drivers Licence
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.religion}
+                       {data?.data?.employer?.driversLicence && <a href={data?.data?.employer?.driversLicence?.url} target="_blank">{data?.data?.employer?.driversLicence?.name}</a>}
                       </td>
                     </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        State willing to relocate to
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.stateCoverage?.toString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Disabilities
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.disabilities?.toString()}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Allergies
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.allegies?.toString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        {data?.data?.mynda?.docType}
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                       {data?.data?.mynda?.document && <a href={data?.data?.mynda?.document?.url} target="_blank">{data?.data?.mynda?.document?.name}</a>}
-                      </td>
-                    </tr>
+                
                   </tbody>
                 </table>
               </div>
@@ -146,4 +118,4 @@ if (isLoading) return <p>Loading...</p>;
   );
 };
 
-export default OverviewTabs;
+export default EmployerOverviewTabs;

@@ -1,4 +1,11 @@
+import { Agency } from "./agency.interface";
+import { Employer } from "./employer.interface";
+import { IFile } from "./file.type";
+import { Laboratory } from "./laboratory.interface";
+import { Mynda } from "./mynda.interface";
+
 export interface User {
+  _id: string;
   firstName: string;
   lastName: string;
   isPhoneVerified?: boolean;
@@ -16,4 +23,13 @@ export interface User {
   phoneNumber: string;
   role: string;
   createdAt: string;
+}
+
+export interface UserProfile {
+  user: User;
+  profilePicture?: IFile;
+  mynda: Mynda;
+  employer: Employer;
+  agency: Agency;
+  laboratory: Laboratory;
 }

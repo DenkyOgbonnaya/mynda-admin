@@ -1,12 +1,14 @@
 import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { getAccessToken } from "utills/appStorage";
 
 interface AuthProtectedProps {
   children: ReactNode;
 }
 
 const AuthProtected: React.FC<AuthProtectedProps> = ({ children }) => {
-  if (!localStorage.getItem("authUser")) {
+  const accessToken = getAccessToken()
+  if (!accessToken) {
     return <Navigate to={{ pathname: "/login" }} />;
   }
 

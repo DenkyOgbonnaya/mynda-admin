@@ -4,3 +4,11 @@ export interface IFile {
   id: string;
   size: number;
 }
+
+export interface FileUploadRes {
+  url: string;
+  id: string;
+  fileName: string;
+  size: number;
+  type: string;
+}

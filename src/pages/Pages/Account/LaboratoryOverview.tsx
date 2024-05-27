@@ -5,10 +5,12 @@ import useUserProfile from "hooks/useUserProfile";
 
 
 
-const OverviewTabs = () => {
+const LaboratoryOverviewTabs = () => {
     const params = useParams();
 
 const { data, isLoading } = useUserProfile(params.id!);
+
+
 
 if (isLoading) return <p>Loading...</p>;
   return (
@@ -19,7 +21,7 @@ if (isLoading) return <p>Loading...</p>;
             <div className="card-body">
               <h6 className="mb-3 text-15">Overview</h6>
               <p className="mb-2 text-slate-500 dark:text-zink-200">
-                {data?.data?.mynda?.about}
+                {data?.data?.laboratory?.about}
               </p>
             </div>
           </div>
@@ -31,21 +33,47 @@ if (isLoading) return <p>Loading...</p>;
               <div className="overflow-x-auto">
                 <table className="w-full ltr:text-left rtl:ext-right">
                   <tbody>
-                    <tr>
+                  <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Residential Address
+                        Name
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.address}
+                        {data?.data?.laboratory?.name}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Office Address
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.laboratory?.officeAddress}
+                      </td>
+                    </tr>
+
+                
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Email
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.laboratory?.email}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Phone Number
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.laboratory.phoneNumber}
                       </td>
                     </tr>
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        State of Origin
+                        State
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.state}
+                        {data?.data?.laboratory?.state}
                       </td>
                     </tr>
 
@@ -54,85 +82,23 @@ if (isLoading) return <p>Loading...</p>;
                         L . G .A
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.lga}
+                        {data?.data?.laboratory?.lga}
                       </td>
                     </tr>
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Sex
+                        C.A.C
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.gender}
+                       {data?.data?.laboratory?.cac && <a href={data?.data?.laboratory?.cac?.url} target="_blank">{data?.data?.laboratory?.cac?.name}</a>}
                       </td>
                     </tr>
 
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Height
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.height}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Category
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.occupation}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Date of birth
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.dob ? new Date(data?.data?.mynda?.dob).toLocaleDateString() : ""}
-                      </td>
-                    </tr>
+                   
 
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Religion
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.religion}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        State willing to relocate to
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.stateCoverage?.toString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Disabilities
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.disabilities?.toString()}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Allergies
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.allegies?.toString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        {data?.data?.mynda?.docType}
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                       {data?.data?.mynda?.document && <a href={data?.data?.mynda?.document?.url} target="_blank">{data?.data?.mynda?.document?.name}</a>}
-                      </td>
-                    </tr>
+               
+                
                   </tbody>
                 </table>
               </div>
@@ -146,4 +112,4 @@ if (isLoading) return <p>Loading...</p>;
   );
 };
 
-export default OverviewTabs;
+export default LaboratoryOverviewTabs;

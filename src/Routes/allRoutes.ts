@@ -195,6 +195,10 @@ import Settings from "pages/Pages/Settings";
 import Pricing from "pages/Pages/Pricing";
 import Faqs from "pages/Pages/Faqs";
 import ContactUs from "pages/Pages/ContactUs";
+import Skills from "pages/skills/Skills";
+import Roles from "pages/roles/Roles";
+import ServiceCategory from "pages/serviceCategory/ServiceCategory";
+import JobPlans from "pages/jobPlans/JobPlans";
 
 interface RouteObject {
   path: string;
@@ -351,8 +355,13 @@ const authProtectedRoutes: Array<RouteObject> = [
   { path: "/apps-users-list", component: UserListView },
   { path: "/apps-users-grid", component: UserGridView },
 
+  { path: "/skills", component: Skills },
+  { path: "/roles", component: Roles },
+  { path: "/service-category", component: ServiceCategory },
+  { path: "/job-plans", component: JobPlans },
+
   // pages
-  { path: "/pages-account", component: Account },
+  { path: "/pages-account/:id", component: Account },
   { path: "/pages-account-settings", component: Settings },
   { path: "/pages-pricing", component: Pricing },
   { path: "/pages-faqs", component: Faqs },
