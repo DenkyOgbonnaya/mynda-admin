@@ -1,0 +1,1 @@
+module "cleave.js/react"

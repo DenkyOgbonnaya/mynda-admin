@@ -36,6 +36,7 @@
     "axios": "^1.6.6",
     "axios-mock-adapter": "^1.22.0",
     "cleave.js": "^1.6.0",
+    "@types/cleave.js": "^1.4.12",
     "firebase": "^10.7.2",
     "flatpickr": "^4.6.13",
     "formik": "^2.4.5",
