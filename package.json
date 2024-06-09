@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "6": "^0.0.1",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@ckeditor/ckeditor5-build-classic": "^41.0.0",
     "@ckeditor/ckeditor5-editor-balloon": "^41.0.0",
     "@ckeditor/ckeditor5-react": "^6.2.0",
