@@ -1,1 +1,1 @@
-module "cleave.js/react"
+declare module "cleave.js/react";
