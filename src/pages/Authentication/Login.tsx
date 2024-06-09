@@ -6,8 +6,8 @@ import * as Yup from "yup";
 import { useFormik as useFormic } from "formik";
 
 // Image
-import logoLight from "assets/images/logo-light.png";
-import logoDark from "assets/images/logo-dark.png";
+import logoLight from "assets/images/medal.png";
+import logoDark from "assets/images/mynda.jpg";
 import { socialLogin } from "slices/thunk";
 import { useDispatch, useSelector } from "react-redux";
 import withRouter from "Common/withRouter";
@@ -121,12 +121,12 @@ const Login = (props: any) => {
               <img
                 src={logoLight}
                 alt=""
-                className="hidden h-6 mx-auto dark:block"
+                className="hidden h-12 mx-auto dark:block"
               />
               <img
                 src={logoDark}
                 alt=""
-                className="block h-6 mx-auto dark:hidden"
+                className="block h-12 mx-auto dark:hidden"
               />
             </Link>
 
@@ -242,47 +242,6 @@ const Login = (props: any) => {
                   className="w-full text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
                 >
                   {isLoading ? "Loading..." : "Sign In"}
-                </button>
-              </div>
-
-              <div className="relative text-center my-9 before:absolute before:top-3 before:left-0 before:right-0 before:border-t before:border-t-slate-200 dark:before:border-t-zink-500">
-                <h5 className="inline-block px-2 py-0.5 text-sm bg-white text-slate-500 dark:bg-zink-600 dark:text-zink-200 rounded relative">
-                  Sign In with
-                </h5>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-2">
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 active:text-white active:bg-custom-600 active:border-custom-600"
-                  onClick={(e: any) => {
-                    e.preventDefault();
-                    socialResponse("facebook");
-                  }}
-                >
-                  <Facebook className="size-4"></Facebook>
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-white btn bg-orange-500 border-orange-500 hover:text-white hover:bg-orange-600 hover:border-orange-600 focus:text-white focus:bg-orange-600 focus:border-orange-600 active:text-white active:bg-orange-600 active:border-orange-600"
-                  onClick={(e: any) => {
-                    e.preventDefault();
-                    socialResponse("google");
-                  }}
-                >
-                  <Mail className="size-4"></Mail>
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-white btn bg-sky-500 border-sky-500 hover:text-white hover:bg-sky-600 hover:border-sky-600 focus:text-white focus:bg-sky-600 focus:border-sky-600 active:text-white active:bg-sky-600 active:border-sky-600"
-                >
-                  <Twitter className="size-4"></Twitter>
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-white btn bg-slate-500 border-slate-500 hover:text-white hover:bg-slate-600 hover:border-slate-600 focus:text-white focus:bg-slate-600 focus:border-slate-600 active:text-white active:bg-slate-600 active:border-slate-600"
-                >
-                  <Github className="size-4"></Github>
                 </button>
               </div>
 

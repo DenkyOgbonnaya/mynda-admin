@@ -1,5 +1,5 @@
-import {IFile} from './file.type';
-import {User} from './user.type';
+import { IFile } from "./file.type";
+import { User } from "./user.type";
 
 export interface MyndaCreate {
   title: string;
@@ -56,7 +56,18 @@ export interface EducationCreate {
 export interface Education extends EducationCreate {
   _id: string;
 }
-
+export interface GuarantorConsent {
+  firstName: string;
+  lastName: string;
+  occupation: string;
+  relationship: string;
+  identity: IFile;
+  email: string;
+  phone: string;
+  address: string;
+  docType: string;
+  docNumber: string;
+}
 export interface Guarantor {
   fullName: string;
   email: string;
@@ -64,6 +75,8 @@ export interface Guarantor {
   occupation: string;
   relationship: string;
   phone: string;
+  guarantorConsent?: GuarantorConsent;
+  consent?: string;
 }
 
 export interface Mynda extends MyndaCreate, MyndaIdentity {

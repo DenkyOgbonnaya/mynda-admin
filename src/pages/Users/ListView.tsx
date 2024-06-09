@@ -1,32 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BreadCrumb from "Common/BreadCrumb";
-import { Link } from "react-router-dom";
-import { Dropdown } from "Common/Components/Dropdown";
-import TableContainer from "Common/TableContainer";
-import Flatpickr from "react-flatpickr";
-import moment from "moment";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 // Icons
-import {
-  Search,
-  Eye,
-  Trash2,
-  Plus,
-  MoreHorizontal,
-  FileEdit,
-  CheckCircle,
-  Loader,
-  X,
-  Download,
-  SlidersHorizontal,
-  ImagePlus,
-} from "lucide-react";
-import Modal from "Common/Components/Modal";
-import DeleteModal from "Common/DeleteModal";
-
-// Images
-import dummyImg from "assets/images/users/user-dummy-img.jpg";
+import { Search, CheckCircle, Loader, X } from "lucide-react";
 
 // react-redux
 import { useDispatch, useSelector } from "react-redux";
@@ -49,7 +26,7 @@ import { User } from "types/user.type";
 
 const ListView = () => {
   const dispatch = useDispatch<any>();
-  const { data, isLoading } = useUsers();
+  const { data, isLoading, onQueryChange } = useUsers();
 
   const selectDataList = createSelector(
     (state: any) => state.Users,
@@ -65,7 +42,7 @@ const ListView = () => {
   const [show, setShow] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // Get Data
   useEffect(() => {
@@ -75,33 +52,6 @@ const ListView = () => {
   useEffect(() => {
     setUser(userList);
   }, [userList]);
-
-  // Delete Modal
-  const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  const deleteToggle = () => setDeleteModal(!deleteModal);
-
-  // Delete Data
-  const onClickDelete = (cell: any) => {
-    setDeleteModal(true);
-    if (cell.id) {
-      setEventData(cell);
-    }
-  };
-
-  const handleDelete = () => {
-    if (eventData) {
-      dispatch(onDeleteUserList(eventData.id));
-      setDeleteModal(false);
-    }
-  };
-  //
-
-  // Update Data
-  const handleUpdateDataClick = (ele: any) => {
-    setEventData({ ...ele });
-    setIsEdit(true);
-    setShow(true);
-  };
 
   // validation
   const validation: any = useFormik({
@@ -155,18 +105,6 @@ const ListView = () => {
 
   // Image
   const [selectedImage, setSelectedImage] = useState<any>();
-  const handleImageChange = (event: any) => {
-    const fileInput = event.target;
-    if (fileInput.files && fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        validation.setFieldValue("img", e.target.result);
-        setSelectedImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const toggle = useCallback(() => {
     if (show) {
@@ -181,13 +119,6 @@ const ListView = () => {
       validation.resetForm();
     }
   }, [show, validation]);
-
-  // Search Data
-  const filterSearchData = (e: any) => {
-    const search = e.target.value;
-    const keysToSearch = ["name", "designation", "location", "email", "status"];
-    filterDataBySearch(userList, search, keysToSearch, setUser);
-  };
 
   // columns
   const Status = ({ item }: any) => {
@@ -223,13 +154,13 @@ const ListView = () => {
     }
   };
 
+  const viewUser = (user: User) => {
+    navigate(`/pages-account/${user._id}`);
+  };
 
-
-
-
-  const viewUser = (user:User) => {
-    navigate(`/pages-account/${user._id}`)
-  }
+  const handlePaginate = (page: number) => {
+    onQueryChange("page", page);
+  };
 
   return (
     <React.Fragment>
@@ -264,16 +195,16 @@ const ListView = () => {
                       <div className="py-6 text-center">
                         <Search className="size-6 mx-auto text-sky-500 fill-sky-100 dark:sky-500/20" />
                         <h5 className="mt-2 mb-1">Sorry! No Result Found</h5>
-                        <p className="mb-0 text-slate-500 dark:text-zink-200">
-                          We've searched more than 199+ users We did not find
-                          any users for you search.
-                        </p>
                       </div>
                     </div>
                   ) : (
                     <>
                       {data?.data?.data.map((user) => (
-                        <tr key={user._id} className=" cursor-pointer" onClick={()=> viewUser(user)}>
+                        <tr
+                          key={user._id}
+                          className=" cursor-pointer"
+                          onClick={() => viewUser(user)}
+                        >
                           <td className="px-3.5 py-2.5  border-custom-500 dark:border-custom-800">
                             <div className="flex items-center gap-2">
                               <div className="flex items-center justify-center size-10 font-medium rounded-full shrink-0 bg-slate-200 text-slate-800 dark:text-zink-50 dark:bg-zink-600">
@@ -319,14 +250,29 @@ const ListView = () => {
                   )}
                 </tbody>
               </table>
+              <div className="flex gap-4 items-center justify-end my-4 px-4">
+                <button
+                  disabled={Number(data?.data?.page)! <= 1}
+                  className="p-3 border-sm"
+                  onClick={() => handlePaginate(Number(data?.data?.page!)! - 1)}
+                >
+                  Previous
+                </button>
+                <span>{data?.data?.page}</span>
+                <button
+                  disabled={
+                    Number(data?.data?.page)! >=
+                    Number(data?.data?.total) / Number(data?.data?.limit)!
+                  }
+                  onClick={() => handlePaginate(Number(data?.data?.page!) + 1)}
+                >
+                  Next
+                </button>
+              </div>
             </div>
-
-         
           </div>
         </div>
       </div>
-
-    
     </React.Fragment>
   );
 };

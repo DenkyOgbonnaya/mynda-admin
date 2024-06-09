@@ -11,21 +11,25 @@ import DeleteModal from "Common/DeleteModal";
 import { ToastContainer, toast } from "react-toastify";
 import useInputChange from "hooks/useInputChange";
 import { useMutation, useQueryClient } from "react-query";
-import { addRole, addServiceCategories, deleteSkill } from "services/general.service";
+import {
+  addRole,
+  addServiceCategories,
+  deleteSkill,
+} from "services/general.service";
 import { Role, ServiceCategory } from "types/general.interface";
 import useServiceCategories from "hooks/userServiceCategories";
 import { uploadeFile } from "services/file.service";
 
 const ServiceCategoryList = () => {
-
   const { data } = useServiceCategories();
   const [showAdd, setShowAdd] = useState(false);
-  const { state, onChange, onChangeByNameValue } = useInputChange<ServiceCategory>({
-    name: "",
-    description: '',
-    coverPhoto: undefined
-  });
-  const [record] = useState<any >(null)
+  const { state, onChange, onChangeByNameValue } =
+    useInputChange<ServiceCategory>({
+      name: "",
+      description: "",
+      coverPhoto: undefined,
+    });
+  const [record] = useState<any>(null);
   const [showDelete, setShowDelete] = useState(false);
 
   const queryClient = useQueryClient();
@@ -44,20 +48,19 @@ const ServiceCategoryList = () => {
     }
   );
 
-  const {  mutate:uploadMutate } = useMutation(
-    async (file:FormData) => await uploadeFile(file),
+  const { mutate: uploadMutate } = useMutation(
+    async (file: FormData) => await uploadeFile(file),
     {
       onSuccess(data) {
-        const file:ServiceCategory["coverPhoto"] = {
-            name: data?.data?.fileName,
-            url: data?.data?.url,
-            id:data?.data.id,
-            size: data?.data?.size,
+        const file: ServiceCategory["coverPhoto"] = {
+          name: data?.data.fileName || "any",
+          url: data?.data.url,
+          id: data?.data.id,
+          size: data?.data.size,
+        };
 
-        }
-        onChangeByNameValue("coverPhoto",file)
+        onChangeByNameValue("coverPhoto", file);
         toast.success(data?.message);
-     
       },
       onError(error: any) {
         toast.error(error?.response?.data?.message);
@@ -79,20 +82,19 @@ const ServiceCategoryList = () => {
 
   const handleDelete = () => {
     // deleteMutate()
-  }
+  };
 
-  const handleUplaod = (e:ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files){
-        const formData = new FormData();
-        const file = e.target.files[0]
+  const handleUplaod = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const formData = new FormData();
+      const file = e.target.files[0];
 
-      
-        formData.append("file", file);
-        // console.log(file,"FILEss", formData.get("file"))
+      formData.append("file", file);
+      // console.log(file,"FILEss", formData.get("file"))
 
-        uploadMutate(formData)
+      uploadMutate(formData);
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -123,7 +125,6 @@ const ServiceCategoryList = () => {
                       Name
                     </th>
 
-                  
                     <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
                       Description
                     </th>
@@ -147,7 +148,7 @@ const ServiceCategoryList = () => {
                           <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
                             {record.name}
                           </td>
-                        
+
                           <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
                             {record.description}
                           </td>
@@ -190,7 +191,7 @@ const ServiceCategoryList = () => {
           <Modal.Title className="text-16">Add Category</Modal.Title>
         </Modal.Header>
         <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-          <form  onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="inline-block mb-2 text-base font-medium">
                 Name
@@ -217,8 +218,6 @@ const ServiceCategoryList = () => {
                 name="coverPhoto"
                 onChange={handleUplaod}
                 required={true}
-                value={state.coverPhoto?.name}
-                
               />
             </div>
 
@@ -256,7 +255,11 @@ const ServiceCategoryList = () => {
         </Modal.Body>
       </Modal>
 
-      <DeleteModal show={showDelete} onHide={toggleDelete} onDelete={handleDelete}/>
+      <DeleteModal
+        show={showDelete}
+        onHide={toggleDelete}
+        onDelete={handleDelete}
+      />
     </React.Fragment>
   );
 };

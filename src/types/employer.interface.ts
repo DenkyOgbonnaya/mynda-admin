@@ -16,6 +16,8 @@ export interface EmployerCreate extends EmployerUpdate {
   utilityBill: IFile | null;
   driversLicence: IFile | null;
   bvn: string;
+  docType: string;
+  docNumber: string
 }
 
 export interface Employer extends EmployerCreate {

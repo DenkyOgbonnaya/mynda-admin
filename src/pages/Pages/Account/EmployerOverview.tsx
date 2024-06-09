@@ -3,16 +3,12 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import useUserProfile from "hooks/useUserProfile";
 
-
-
 const EmployerOverviewTabs = () => {
-    const params = useParams();
+  const params = useParams();
 
-const { data, isLoading } = useUserProfile(params.id!);
+  const { data, isLoading } = useUserProfile(params.id!);
 
-console.log(data, "DAAA")
-
-if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
   return (
     <React.Fragment>
       <div className="grid grid-cols-1 gap-x-5 2xl:grid-cols-12">
@@ -47,7 +43,10 @@ if (isLoading) return <p>Loading...</p>;
                         Date of Birth
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.employer?.dob && new Date(data?.data?.employer?.dob).toLocaleDateString()}
+                        {data?.data?.employer?.dob &&
+                          new Date(
+                            data?.data?.employer?.dob
+                          ).toLocaleDateString()}
                       </td>
                     </tr>
                     <tr>
@@ -58,7 +57,6 @@ if (isLoading) return <p>Loading...</p>;
                         {data?.data?.employer?.gender}
                       </td>
                     </tr>
-               
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
@@ -80,10 +78,35 @@ if (isLoading) return <p>Loading...</p>;
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
+                        Uploaded Document
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.employer?.docType}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Document
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.employer?.docNumber}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
                         NIN
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                       {data?.data?.employer?.nin && <a href={data?.data?.employer?.nin?.url} target="_blank">{data?.data?.employer?.nin?.name}</a>}
+                        {data?.data?.employer?.nin && (
+                          <a
+                            href={data?.data?.employer?.nin?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {data?.data?.employer?.nin?.name}
+                          </a>
+                        )}
                       </td>
                     </tr>
 
@@ -92,7 +115,15 @@ if (isLoading) return <p>Loading...</p>;
                         Utility Bill
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                       {data?.data?.employer?.utilityBill && <a href={data?.data?.employer?.utilityBill?.url} target="_blank">{data?.data?.employer?.utilityBill?.name}</a>}
+                        {data?.data?.employer?.utilityBill && (
+                          <a
+                            href={data?.data?.employer?.utilityBill?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {data?.data?.employer?.utilityBill?.name}
+                          </a>
+                        )}
                       </td>
                     </tr>
 
@@ -101,19 +132,24 @@ if (isLoading) return <p>Loading...</p>;
                         Drivers Licence
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                       {data?.data?.employer?.driversLicence && <a href={data?.data?.employer?.driversLicence?.url} target="_blank">{data?.data?.employer?.driversLicence?.name}</a>}
+                        {data?.data?.employer?.driversLicence && (
+                          <a
+                            href={data?.data?.employer?.driversLicence?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {data?.data?.employer?.driversLicence?.name}
+                          </a>
+                        )}
                       </td>
                     </tr>
-                
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-        
         </div>
       </div>
-   
     </React.Fragment>
   );
 };
