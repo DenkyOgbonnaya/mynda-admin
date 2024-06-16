@@ -1,4 +1,4 @@
-import {IFile} from './file.type';
+import { IFile } from "./file.type";
 
 export interface EmployerUpdate {
   gender: string;
@@ -17,7 +17,8 @@ export interface EmployerCreate extends EmployerUpdate {
   driversLicence: IFile | null;
   bvn: string;
   docType: string;
-  docNumber: string
+  docNumber: string;
+  document: IFile | null;
 }
 
 export interface Employer extends EmployerCreate {

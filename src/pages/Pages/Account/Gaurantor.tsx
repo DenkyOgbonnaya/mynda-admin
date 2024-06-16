@@ -1,13 +1,163 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useParams } from "react-router-dom";
 import useUserProfile from "hooks/useUserProfile";
 import useGuarantor from "hooks/useGuarantor";
+import {
+  NinVerificationInput,
+  NinVerificationRes,
+} from "types/verification.type";
+import {
+  verifyDriverLicence,
+  verifyNin,
+  verifyVoterCard,
+} from "services/verification.service";
 
 const Guarantor = () => {
   const params = useParams();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { data, isLoading } = useGuarantor(params.id!);
+
+  const handleDocVerification = async (val: string) => {
+    if (data?.data?.guarantorConsent?.docType?.toLowerCase()?.includes("nin")) {
+      handleNinVerification(val);
+    }
+    if (
+      data?.data?.guarantorConsent?.docType
+        ?.toLowerCase()
+        .includes("voters card")
+    ) {
+      handleVoterCardVerification(val);
+    }
+    if (
+      data?.data?.guarantorConsent?.docType
+        ?.toLowerCase()
+        .includes("driverlicense")
+    ) {
+      handleDriverLicenceVerification(val);
+    }
+  };
+
+  const handleNinVerification = async (nin: string) => {
+    const firstName = data?.data?.guarantorConsent?.firstName;
+    const lastName = data?.data?.guarantorConsent?.lastName;
+    try {
+      setErrorMessage("");
+      setLoading(true);
+      const ninPayload: NinVerificationInput = {
+        nin,
+      };
+      const res = await verifyNin(ninPayload);
+      const info = res.data as NinVerificationRes;
+
+      if (
+        info.first_name?.toLowerCase() !== firstName?.toLowerCase() &&
+        info.last_name.toLowerCase() !== lastName?.toLowerCase()
+      ) {
+        setErrorMessage(
+          "first and last name does not match with provided Identity"
+        );
+
+        return;
+      }
+
+      if (info.first_name.toLowerCase() !== firstName?.toLowerCase()) {
+        setErrorMessage(" first name does not match with provided Identity");
+
+        return;
+      }
+      if (info.last_name?.toLowerCase() !== lastName?.toLowerCase()) {
+        setErrorMessage("last name does not match with provided Identity");
+
+        return;
+      }
+    } catch (error: any) {
+      setErrorMessage(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVoterCardVerification = async (vin: string) => {
+    try {
+      setErrorMessage("");
+
+      setLoading(true);
+      const gfirstName = data?.data?.guarantorConsent?.firstName;
+      const glastName = data?.data?.guarantorConsent?.lastName;
+
+      const info = await verifyVoterCard(vin);
+      const [firstName, _, lastName] = info.data.full_name.split(" ");
+
+      if (
+        firstName?.toLowerCase() !== gfirstName?.toLowerCase() &&
+        lastName.toLowerCase() !== glastName?.toLowerCase()
+      ) {
+        setErrorMessage(
+          "first and last name does not match with provided Identity"
+        );
+
+        return;
+      }
+
+      if (firstName.toLowerCase() !== gfirstName?.toLowerCase()) {
+        setErrorMessage("first name does not match with provided Identity");
+
+        return;
+      }
+      if (lastName?.toLowerCase() !== glastName?.toLowerCase()) {
+        setErrorMessage("last name does not match with provided Identity");
+
+        return;
+      }
+    } catch (error: any) {
+      setErrorMessage(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDriverLicenceVerification = async (licenceNumber: string) => {
+    try {
+      setErrorMessage("");
+      setLoading(true);
+
+      const gfirstName = data?.data?.guarantorConsent?.firstName;
+      const glastName = data?.data?.guarantorConsent?.lastName;
+
+      const info = await verifyDriverLicence(licenceNumber);
+      const firstName = info.data.firstName;
+      const lastName = info.data.lastName;
+
+      if (
+        firstName?.toLowerCase() !== gfirstName?.toLowerCase() &&
+        lastName.toLowerCase() !== glastName?.toLowerCase()
+      ) {
+        setErrorMessage(
+          "first and last name does not match with provided Identity"
+        );
+
+        return;
+      }
+
+      if (firstName.toLowerCase() !== gfirstName?.toLowerCase()) {
+        setErrorMessage("irst name does not match with provided Identity");
+
+        return;
+      }
+      if (lastName?.toLowerCase() !== glastName?.toLowerCase()) {
+        setErrorMessage("last name does not match with provided Identity");
+
+        return;
+      }
+    } catch (error: any) {
+      setErrorMessage(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (isLoading) return <p>Loading...</p>;
   return (
@@ -163,6 +313,21 @@ const Guarantor = () => {
                     </tr>
                   </tbody>
                 </table>
+                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                {data?.data?.consent?.toLowerCase() === "approved" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleDocVerification(
+                        data?.data.guarantorConsent?.docNumber!
+                      )
+                    }
+                    // disabled={data?.data?.user?.accountVerified}
+                    className="text-white transition-all duration-200 ease-linear btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20 mt-12"
+                  >
+                    {loading ? "Processing..." : "  Verify Guarantor Document"}
+                  </button>
+                )}
               </div>
             </div>
           </div>

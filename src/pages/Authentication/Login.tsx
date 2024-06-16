@@ -66,6 +66,7 @@ const Login = (props: any) => {
       password: Yup.string().required("Please Enter Your Password"),
     }),
     onSubmit: (values: any) => {
+      setErrorMessage("");
       mutate(values);
     },
   });

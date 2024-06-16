@@ -30,26 +30,9 @@ httpClient.interceptors.response.use(
     return res;
   },
   async (err) => {
-    const originalRequest = err.config;
-    const refreshToken = getRefreshToken();
-    const config: AxiosRequestConfig = {
-      headers: {
-        "X-REFRESH": refreshToken!,
-      },
-    };
-
-    // if (err.response.status === 401 && !originalRequest._retry) {
-    //   if (err.response.status === 401 && !originalRequest._retry) {
-    //     originalRequest._retry = true;
-    //     const refreshToken = getRefreshToken()
-    //     const data = await httpClient.post('/auth/refresh-tokenization', {refreshToken});
-
-    //     if (data && data.data) {
-    //       if (data.data.accessToken) setAccessToken(data.data.accessToken);
-    //     }
-    //   }
-    //   return httpClient(originalRequest);
-    // }
+    if (err.response.status === 401) {
+      window.location.href = "/login";
+    }
     return Promise.reject(err);
   }
 );

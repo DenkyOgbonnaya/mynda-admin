@@ -67,6 +67,7 @@ export interface GuarantorConsent {
   address: string;
   docType: string;
   docNumber: string;
+  document: IFile;
 }
 export interface Guarantor {
   fullName: string;

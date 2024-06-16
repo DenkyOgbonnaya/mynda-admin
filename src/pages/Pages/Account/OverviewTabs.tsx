@@ -3,14 +3,12 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import useUserProfile from "hooks/useUserProfile";
 
-
-
 const OverviewTabs = () => {
-    const params = useParams();
+  const params = useParams();
 
-const { data, isLoading } = useUserProfile(params.id!);
+  const { data, isLoading } = useUserProfile(params.id!);
 
-if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
   return (
     <React.Fragment>
       <div className="grid grid-cols-1 gap-x-5 2xl:grid-cols-12">
@@ -88,7 +86,11 @@ if (isLoading) return <p>Loading...</p>;
                         Date of birth
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.mynda?.dob ? new Date(data?.data?.mynda?.dob).toLocaleDateString() : ""}
+                        {data?.data?.mynda?.dob
+                          ? new Date(
+                              data?.data?.mynda?.dob
+                            ).toLocaleDateString()
+                          : ""}
                       </td>
                     </tr>
 
@@ -127,10 +129,51 @@ if (isLoading) return <p>Loading...</p>;
                     </tr>
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
+                        Uploaded Document
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.mynda?.docType}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Document Number
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.mynda?.docNumber}
+                      </td>
+                    </tr>
+
+                    {/* <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
+                        Document
+                      </th>
+                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                        {data?.data?.mynda?.document && (
+                          <a
+                            href={data?.data?.mynda?.document?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {data?.data?.mynda?.document?.name}
+                          </a>
+                        )}
+                      </td>
+                    </tr> */}
+                    <tr>
+                      <th className="py-2 font-semibold ps-0" scope="row">
                         {data?.data?.mynda?.docType}
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                       {data?.data?.mynda?.document && <a href={data?.data?.mynda?.document?.url} target="_blank">{data?.data?.mynda?.document?.name}</a>}
+                        {data?.data?.mynda?.document && (
+                          <a
+                            href={data?.data?.mynda?.document?.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {data?.data?.mynda?.document?.name}
+                          </a>
+                        )}
                       </td>
                     </tr>
                   </tbody>
@@ -138,10 +181,8 @@ if (isLoading) return <p>Loading...</p>;
               </div>
             </div>
           </div>
-        
         </div>
       </div>
-   
     </React.Fragment>
   );
 };

@@ -86,7 +86,7 @@ const EmployerOverviewTabs = () => {
                     </tr>
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        Document
+                        Document Number
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
                         {data?.data?.employer?.docNumber}
@@ -95,16 +95,16 @@ const EmployerOverviewTabs = () => {
 
                     <tr>
                       <th className="py-2 font-semibold ps-0" scope="row">
-                        NIN
+                        Document
                       </th>
                       <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.employer?.nin && (
+                        {data?.data?.employer?.document && (
                           <a
-                            href={data?.data?.employer?.nin?.url}
+                            href={data?.data?.employer?.document?.url}
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {data?.data?.employer?.nin?.name}
+                            {data?.data?.employer?.document?.name}
                           </a>
                         )}
                       </td>
@@ -122,23 +122,6 @@ const EmployerOverviewTabs = () => {
                             rel="noreferrer"
                           >
                             {data?.data?.employer?.utilityBill?.name}
-                          </a>
-                        )}
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <th className="py-2 font-semibold ps-0" scope="row">
-                        Drivers Licence
-                      </th>
-                      <td className="py-2 text-right text-slate-500 dark:text-zink-200">
-                        {data?.data?.employer?.driversLicence && (
-                          <a
-                            href={data?.data?.employer?.driversLicence?.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {data?.data?.employer?.driversLicence?.name}
                           </a>
                         )}
                       </td>
