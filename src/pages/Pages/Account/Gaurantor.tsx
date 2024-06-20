@@ -17,10 +17,24 @@ const Guarantor = () => {
   const params = useParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [validationUser, setValidationUser] = useState({
+    firstName: "",
+    lastName: "",
+    // email: "",
+    phoneNumber: "",
+    occupation: "",
+  });
 
   const { data, isLoading } = useGuarantor(params.id!);
 
   const handleDocVerification = async (val: string) => {
+    setValidationUser({
+      firstName: "",
+      lastName: "",
+      // email: "",
+      phoneNumber: "",
+      occupation: "",
+    });
     if (data?.data?.guarantorConsent?.docType?.toLowerCase()?.includes("nin")) {
       handleNinVerification(val);
     }
@@ -51,6 +65,12 @@ const Guarantor = () => {
       };
       const res = await verifyNin(ninPayload);
       const info = res.data as NinVerificationRes;
+      setValidationUser({
+        firstName: info.first_name,
+        lastName: info.last_name,
+        phoneNumber: info.phone_number,
+        occupation: "",
+      });
 
       if (
         info.first_name?.toLowerCase() !== firstName?.toLowerCase() &&
@@ -91,6 +111,13 @@ const Guarantor = () => {
       const info = await verifyVoterCard(vin);
       const [firstName, _, lastName] = info.data.full_name.split(" ");
 
+      setValidationUser({
+        firstName: firstName,
+        lastName: lastName,
+        phoneNumber: info.data?.phone,
+        occupation: info?.data?.occupation,
+      });
+
       if (
         firstName?.toLowerCase() !== gfirstName?.toLowerCase() &&
         lastName.toLowerCase() !== glastName?.toLowerCase()
@@ -130,6 +157,13 @@ const Guarantor = () => {
       const info = await verifyDriverLicence(licenceNumber);
       const firstName = info.data.firstName;
       const lastName = info.data.lastName;
+
+      setValidationUser({
+        firstName,
+        lastName,
+        phoneNumber: "",
+        occupation: "",
+      });
 
       if (
         firstName?.toLowerCase() !== gfirstName?.toLowerCase() &&
@@ -314,6 +348,46 @@ const Guarantor = () => {
                   </tbody>
                 </table>
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                {validationUser && (
+                  <div>
+                    <h5>Guarantor Verification Details</h5>
+                    <table className="w-full ltr:text-left rtl:ext-right">
+                      <tr>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          First Name
+                        </td>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          {validationUser?.firstName}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          Last Name
+                        </td>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          {validationUser?.lastName}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          Phone Number
+                        </td>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          {validationUser?.phoneNumber}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          Occupation
+                        </td>
+                        <td className="py-2 text-right text-slate-500 dark:text-zink-200">
+                          {validationUser?.occupation}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                )}
                 {data?.data?.consent?.toLowerCase() === "approved" && (
                   <button
                     type="button"
