@@ -136,7 +136,7 @@ const Login = (props: any) => {
                 Welcome Back !
               </h4>
               <p className="text-slate-500 dark:text-zink-200">
-                Sign in to continue to Tailwick.
+                Sign in to continue to Mynda.
               </p>
             </div>
 

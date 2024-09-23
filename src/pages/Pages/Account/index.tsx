@@ -19,7 +19,7 @@ const Account = () => {
   const params = useParams();
   const { data, isLoading } = useUserProfile(params.id!);
 
-  document.title = "Account | Tailwick - React Admin & Dashboard Template";
+  document.title = "Account | Mynda - React Admin & Dashboard Template";
 
   return (
     <React.Fragment>
@@ -38,48 +38,42 @@ const Account = () => {
                   Overview
                 </a>
               </Nav.Item>
-              {
-                data?.data?.mynda &&
-              
-              <Nav.Item eventKey="documentsTabs" className="group">
-                <a
-                  href="#!"
-                  data-tab-toggle
-                  data-target="documentsTabs"
-                  className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
-                >
-                  Guarantor
-                </a>
-              </Nav.Item>
-}
-              {
-                data?.data?.mynda &&
-              
-              <Nav.Item eventKey="projectsTabs" className="group">
-                <a
-                  href="#!"
-                  data-tab-toggle
-                  data-target="projectsTabs"
-                  className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
-                >
-                  Education
-                </a>
-              </Nav.Item>
-}
-              {
-                data?.data?.mynda &&
-              
-              <Nav.Item eventKey="followersTabs" className="group">
-                <a
-                  href="#!"
-                  data-tab-toggle
-                  data-target="followersTabs"
-                  className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
-                >
-                  Work Experience
-                </a>
-              </Nav.Item>
-}
+              {data?.data?.mynda && (
+                <Nav.Item eventKey="documentsTabs" className="group">
+                  <a
+                    href="#!"
+                    data-tab-toggle
+                    data-target="documentsTabs"
+                    className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
+                  >
+                    Guarantor
+                  </a>
+                </Nav.Item>
+              )}
+              {data?.data?.mynda && (
+                <Nav.Item eventKey="projectsTabs" className="group">
+                  <a
+                    href="#!"
+                    data-tab-toggle
+                    data-target="projectsTabs"
+                    className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
+                  >
+                    Education
+                  </a>
+                </Nav.Item>
+              )}
+              {data?.data?.mynda && (
+                <Nav.Item eventKey="followersTabs" className="group">
+                  <a
+                    href="#!"
+                    data-tab-toggle
+                    data-target="followersTabs"
+                    className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border-b border-transparent group-[.active]:text-custom-500 dark:group-[.active]:text-custom-500 group-[.active]:border-b-custom-500 dark:group-[.active]:border-b-custom-500 hover:text-custom-500 dark:hover:text-custom-500 active:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
+                  >
+                    Work Experience
+                  </a>
+                </Nav.Item>
+              )}
             </Nav>
           </div>
         </div>
@@ -94,12 +88,12 @@ const Account = () => {
               <AgencyOverviewTabs />
             </Tab.Pane>
           )}
-           {data?.data?.employer && (
+          {data?.data?.employer && (
             <Tab.Pane eventKey="overviewTabs" id="overviewTabs">
               <EmployerOverviewTabs />
             </Tab.Pane>
           )}
-           {data?.data?.laboratory && (
+          {data?.data?.laboratory && (
             <Tab.Pane eventKey="overviewTabs" id="overviewTabs">
               <LaboratoryOverviewTabs />
             </Tab.Pane>

@@ -2,6 +2,7 @@ import React from "react";
 
 import { useParams } from "react-router-dom";
 import useUserProfile from "hooks/useUserProfile";
+import IdentityVerification from "./IdentityVerification";
 
 const EmployerOverviewTabs = () => {
   const params = useParams();
@@ -11,17 +12,7 @@ const EmployerOverviewTabs = () => {
   if (isLoading) return <p>Loading...</p>;
   return (
     <React.Fragment>
-      <div className="grid grid-cols-1 gap-x-5 2xl:grid-cols-12">
-        <div className="2xl:col-span-9">
-          <div className="card">
-            <div className="card-body">
-              <h6 className="mb-3 text-15">Overview</h6>
-              <p className="mb-2 text-slate-500 dark:text-zink-200">
-                {data?.data?.agency?.about}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="flex grid-cols-1 gap-x-5 2xl:grid-cols-12">
         <div className="2xl:col-span-3">
           <div className="card">
             <div className="card-body">
@@ -132,6 +123,12 @@ const EmployerOverviewTabs = () => {
             </div>
           </div>
         </div>
+        <IdentityVerification
+          docNumber={data?.data?.employer?.docNumber!}
+          docType={data?.data?.employer?.docType!}
+          status={data?.data?.user?.kycStatus!}
+          userId={data?.data?.user?._id!}
+        />
       </div>
     </React.Fragment>
   );

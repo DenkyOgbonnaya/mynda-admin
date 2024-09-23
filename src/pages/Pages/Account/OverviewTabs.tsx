@@ -3,15 +3,16 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import useUserProfile from "hooks/useUserProfile";
 
+import IdentityVerification from "./IdentityVerification";
+
 const OverviewTabs = () => {
   const params = useParams();
-
   const { data, isLoading } = useUserProfile(params.id!);
 
   if (isLoading) return <p>Loading...</p>;
   return (
     <React.Fragment>
-      <div className="grid grid-cols-1 gap-x-5 2xl:grid-cols-12">
+      <div className="flex flex-col">
         <div className="2xl:col-span-9">
           <div className="card">
             <div className="card-body">
@@ -22,7 +23,7 @@ const OverviewTabs = () => {
             </div>
           </div>
         </div>
-        <div className="2xl:col-span-3">
+        <div className="flex gap-4">
           <div className="card">
             <div className="card-body">
               <h6 className="mb-4 text-15">Personal Information</h6>
@@ -181,6 +182,13 @@ const OverviewTabs = () => {
               </div>
             </div>
           </div>
+
+          <IdentityVerification
+            docNumber={data?.data?.mynda?.docNumber!}
+            docType={data?.data?.mynda?.docType!}
+            userId={data?.data?.user?._id!}
+            status={data?.data?.user?.kycStatus!}
+          />
         </div>
       </div>
     </React.Fragment>

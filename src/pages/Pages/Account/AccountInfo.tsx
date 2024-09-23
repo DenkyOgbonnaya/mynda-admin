@@ -26,22 +26,6 @@ const AccountInfo = ({ className }: any) => {
   const params = useParams();
   const { data, isLoading } = useUserProfile(params.id!);
 
-  const queryClient = useQueryClient()
-
-  const { isLoading: verifying, mutate } = useMutation(
-    async () => await verifyUser(params.id!),
-    {
-      onSuccess(data) {
-        queryClient.invalidateQueries()
-      },
-      onError(err: any) {},
-    }
-  );
-
-  const handleVerification = () => {
-    mutate()
-  };
-
   if (isLoading) return <p>Loading...</p>;
 
   return (
@@ -93,18 +77,7 @@ const AccountInfo = ({ className }: any) => {
             </p> */}
           </div>
           <div className="lg:col-span-12 2xl:col-span-2">
-            <div className="flex gap-2 2xl:justify-end">
-             
-                <button
-                  type="button"
-                  onClick={handleVerification}
-                  disabled={data?.data?.user?.accountVerified}
-                  className="text-white transition-all duration-200 ease-linear btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-                >
-                  {verifying ? "Processing..." : data?.data?.user?.accountVerified ? "Verified" : "Approve Account"}
-                </button>
-            
-            </div>
+            <div className="flex gap-2 2xl:justify-end"></div>
           </div>
         </div>
       </div>

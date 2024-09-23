@@ -1,9 +1,11 @@
 import { Agency } from "./agency.interface";
 import { Employer } from "./employer.interface";
 import { IFile } from "./file.type";
+import { PaginationQuery } from "./http.type";
 import { Laboratory } from "./laboratory.interface";
 import { Mynda } from "./mynda.interface";
 
+export type KycStatus = "Approved" | "Pending" | "In Review" | "Rejected";
 export interface User {
   _id: string;
   firstName: string;
@@ -17,6 +19,7 @@ export interface User {
   lastLoggedIn?: Date;
   lastNotificationView?: Date;
   completedKyc?: boolean;
+  kycStatus: KycStatus;
   advertPoints?: number;
   fcmToken?: string;
   email: string;
@@ -32,4 +35,8 @@ export interface UserProfile {
   employer: Employer;
   agency: Agency;
   laboratory: Laboratory;
+}
+
+export interface UserQuery extends PaginationQuery {
+  search?: string;
 }

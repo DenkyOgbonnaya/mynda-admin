@@ -196,8 +196,8 @@ const Guarantor = () => {
   if (isLoading) return <p>Loading...</p>;
   return (
     <React.Fragment>
-      <div className="grid grid-cols-1 gap-x-5 2xl:grid-cols-12">
-        <div className="2xl:col-span-3">
+      <div className="flex flex-1 grid-cols-1 gap-x-5 2xl:grid-cols-12">
+        <div className="flex-1">
           <div className="card">
             <div className="card-body">
               <h6 className="mb-4 text-15">Personal Information</h6>
