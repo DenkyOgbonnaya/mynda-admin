@@ -36,6 +36,10 @@ import Skills from "pages/skills/Skills";
 import Roles from "pages/roles/Roles";
 import ServiceCategory from "pages/serviceCategory/ServiceCategory";
 import JobPlans from "pages/jobPlans/JobPlans";
+import SubscriptionPlans from "pages/subscriptionPlans";
+import Notifications from "pages/notifications";
+import Bookings from "pages/bookings";
+import SendInvoice from "pages/send-invoice";
 
 interface RouteObject {
   path: string;
@@ -60,6 +64,11 @@ const authProtectedRoutes: Array<RouteObject> = [
   { path: "/roles", component: Roles },
   { path: "/service-category", component: ServiceCategory },
   { path: "/job-plans", component: JobPlans },
+  { path: "/subscription-plans", component: SubscriptionPlans },
+  { path: "/notifications", component: Notifications },
+  { path: "/bookings", component: Bookings },
+  { path: "/send-invoice", component: SendInvoice },
+  { path: "/login", component: Login },
 
   // pages
   { path: "/pages-account/:id", component: Account },

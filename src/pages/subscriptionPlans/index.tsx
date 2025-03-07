@@ -9,29 +9,26 @@ import DeleteModal from "Common/DeleteModal";
 // Formik
 
 import { ToastContainer, toast } from "react-toastify";
-import useInputChange from "hooks/useInputChange";
 import { useMutation, useQueryClient } from "react-query";
-import { addRole, deleteSkill } from "services/general.service";
-import { Role } from "types/general.interface";
-import { JobPlan } from "types/subscription.interface";
-import useJobPlans from "hooks/useJobPlans";
+import { JobPlan, SubscriptionPlan } from "types/subscription.interface";
 import {
-  addJobPlan,
-  deleteJobPlan,
-  editJobPlan,
+  addSubPlan,
+  deleteSubPlan,
+  editSubPlan,
 } from "services/subscription.service";
 import JobPlanForm from "./components/jobPlanForm";
+import useSubscriptionPlans from "hooks/useSubscriptionPlans";
 
-const JobPlans = () => {
-  const { data } = useJobPlans();
+const SubscriptionPlans = () => {
+  const { data } = useSubscriptionPlans("Employer");
   const [showAdd, setShowAdd] = useState(false);
-  const [record, setRecord] = useState<JobPlan | null>(null);
+  const [record, setRecord] = useState<SubscriptionPlan | null>(null);
   const [showDelete, setShowDelete] = useState(false);
 
   const queryClient = useQueryClient();
 
   const { isLoading: adding, mutate } = useMutation(
-    async (input: JobPlan) => await addJobPlan(input),
+    async (input: SubscriptionPlan) => await addSubPlan(input),
     {
       onSuccess(data) {
         toast.success(data?.message);
@@ -44,7 +41,7 @@ const JobPlans = () => {
     }
   );
   const { isLoading: editing, mutate: editJobMutate } = useMutation(
-    async (input: JobPlan) => await editJobPlan(record?._id!, input),
+    async (input: SubscriptionPlan) => await editSubPlan(record?._id!, input),
     {
       onSuccess(data) {
         toast.success(data?.message);
@@ -58,7 +55,7 @@ const JobPlans = () => {
   );
 
   const { mutate: deleteMutate } = useMutation(
-    async () => await deleteJobPlan(record?._id!),
+    async () => await deleteSubPlan(record?._id!),
     {
       onSuccess(data) {
         toast.success(data?.message);
@@ -82,23 +79,21 @@ const JobPlans = () => {
     setShowDelete(!showDelete);
   };
 
-  const handleSubmit = (data: JobPlan) => {
+  const handleSubmit = (data: SubscriptionPlan) => {
     if (record) {
-      const payload: JobPlan = {
+      const payload: SubscriptionPlan = {
         ...data,
-        // @ts-ignore
+        role: ["Mynda", "Employer", "Agency", "Laboratory"],
         price: data.price ? Number(data.price) : 0,
-        // @ts-ignore
-        numberOfAds: data.numberOfAds ? Number(data.numberOfAds) : 1,
+        duration: data.duration ? Number(data.duration) : 0,
       };
       editJobMutate(payload);
     } else {
-      const payload: JobPlan = {
+      const payload: SubscriptionPlan = {
         ...data,
         // @ts-ignore
         price: data.price ? Number(data.price) : 0,
-        // @ts-ignore
-        numberOfAds: data.numberOfAds ? Number(data.numberOfAds) : 1,
+        duration: data.duration ? Number(data.duration) : 0,
       };
       mutate(payload);
     }
@@ -108,14 +103,14 @@ const JobPlans = () => {
     deleteMutate();
   };
 
-  const onEdit = async (plan: JobPlan) => {
+  const onEdit = (plan: SubscriptionPlan) => {
     setRecord(plan);
     toggleAdd();
   };
 
   return (
     <React.Fragment>
-      <BreadCrumb title="Job Plans" pageTitle="Users" />
+      <BreadCrumb title="Subscription Plans" pageTitle="Users" />
 
       <ToastContainer closeButton={false} limit={1} />
       <div className="grid grid-cols-1 gap-x-5 xl:grid-cols-12">
@@ -148,6 +143,9 @@ const JobPlans = () => {
                     <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Interval
                     </th>
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
+                      Duration
+                    </th>
 
                     <th className="px-3.5 py-2.5 border border-gray-200font-semibold">
                       Description
@@ -175,11 +173,14 @@ const JobPlans = () => {
                           <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
                             {record.name}
                           </td>
+                          <td className="px-3.5 py-2.5 border   dark:border-custom-800">
+                            {record.interval}
+                          </td>
                           <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
                             N{record.price}
                           </td>
                           <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
-                            {record.interval}
+                            {record.duration} Days
                           </td>
 
                           <td className="px-3.5 py-2.5 border   dark:border-custom-800">
@@ -202,7 +203,7 @@ const JobPlans = () => {
                               data-modal-close="addDocuments"
                               className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
                               onClick={() => {
-                                setRecord(record);
+                                // setRecord(record)
                                 toggleDelete();
                               }}
                             >
@@ -253,4 +254,4 @@ const JobPlans = () => {
   );
 };
 
-export default JobPlans;
+export default SubscriptionPlans;
