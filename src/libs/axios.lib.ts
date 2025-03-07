@@ -31,7 +31,7 @@ httpClient.interceptors.response.use(
   },
   async (err) => {
     if (err.response.status === 401) {
-      window.location.href = "/login";
+      window.location.href = "/";
     }
     return Promise.reject(err);
   }
