@@ -11,7 +11,7 @@ const EmployerOverviewTabs = () => {
 
   if (isLoading) return <p>Loading...</p>;
   return (
-    <React.Fragment>
+    <div className=" overflow-auto">
       <div className="flex grid-cols-1 gap-x-5 2xl:grid-cols-12">
         <div className="2xl:col-span-3">
           <div className="card">
@@ -130,7 +130,7 @@ const EmployerOverviewTabs = () => {
           userId={data?.data?.user?._id!}
         />
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

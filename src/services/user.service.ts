@@ -1,6 +1,12 @@
 import { PaginationDataRes, PaginationQuery } from "types/http.type";
 import { handleGetRequest, handlePutRequest } from "./http.service";
-import { KycStatus, User, UserProfile, UserQuery } from "types/user.type";
+import {
+  KycStatus,
+  User,
+  UserProfile,
+  UserQuery,
+  UserStat,
+} from "types/user.type";
 import { Education, Guarantor, IWorkExperience } from "types/mynda.interface";
 import { AgencyShareHolder } from "types/agency.interface";
 
@@ -44,4 +50,8 @@ export const verifyUser = async (
     `/admins/users/${userId}/verify-account`,
     input
   );
+};
+
+export const getUserStat = async () => {
+  return await handleGetRequest<UserStat>(`/admins/user-stat`);
 };

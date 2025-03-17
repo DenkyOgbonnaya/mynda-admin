@@ -151,6 +151,7 @@ const IdentityVerification = ({
 
   const handleDocVerification = async () => {
     const val = docNumber;
+    console.log(docNumber, "DOC NIUM", docType);
     if (!docNumber) {
       setErrorMessage("No identity document provided");
       return;
@@ -161,7 +162,7 @@ const IdentityVerification = ({
     if (docType?.toLowerCase().includes("voters card")) {
       handleVoterCardVerification(val);
     }
-    if (docType?.toLowerCase().includes("driverlicense")) {
+    if (["drivers license", "driverlicense"].includes(docType?.toLowerCase())) {
       handleDriverLicenceVerification(val);
     }
   };

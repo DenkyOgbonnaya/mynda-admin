@@ -15,17 +15,17 @@ import { ToastContainer, toast } from "react-toastify";
 import useSkills from "hooks/useSkills";
 import useInputChange from "hooks/useInputChange";
 import { useMutation, useQueryClient } from "react-query";
-import { addSkill, deleteSkill } from "services/general.service";
-import { SkillCreate } from "types/general.interface";
+import { addSkill, deleteSkill, editSkill } from "services/general.service";
+import { Skill, SkillCreate } from "types/general.interface";
+import SkillForm from "./SkillForm";
 
 const Skills = () => {
-  const dispatch = useDispatch<any>();
   const { data, isLoading } = useSkills("");
   const [showAdd, setShowAdd] = useState(false);
   const { state, onChange } = useInputChange<{ name: string }>({
     name: "",
   });
-  const [record, setRecord] = useState<any >(null)
+  const [record, setRecord] = useState<any>(null);
   const [showDelete, setShowDelete] = useState(false);
 
   const queryClient = useQueryClient();
@@ -44,13 +44,27 @@ const Skills = () => {
     }
   );
 
-  const { isLoading: deleting, mutate:deleteMutate } = useMutation(
+  const { isLoading: deleting, mutate: deleteMutate } = useMutation(
     async () => await deleteSkill(record?._id),
     {
       onSuccess(data) {
         toast.success(data?.message);
         queryClient.invalidateQueries();
         toggleDelete();
+      },
+      onError(error: any) {
+        toast.error(error?.response?.data?.message);
+      },
+    }
+  );
+
+  const { isLoading: editing, mutate: editMutate } = useMutation(
+    async (input: SkillCreate) => await editSkill(record?._id!, input),
+    {
+      onSuccess(data) {
+        toast.success(data?.message);
+        queryClient.invalidateQueries();
+        toggleAdd();
       },
       onError(error: any) {
         toast.error(error?.response?.data?.message);
@@ -65,17 +79,36 @@ const Skills = () => {
     setShowDelete(!showDelete);
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    mutate(state);
+  const handleSubmit = (data: SkillCreate) => {
+    if (record) {
+      const payload: SkillCreate = {
+        ...data,
+      };
+      editMutate(payload);
+    } else {
+      const payload: SkillCreate = {
+        ...data,
+      };
+      mutate(payload);
+    }
   };
 
   const handleDelete = () => {
-    deleteMutate()
-  }
+    deleteMutate();
+  };
+
+  const onEdit = (record: Skill) => {
+    setRecord(record);
+    toggleAdd();
+  };
+
+  const handleAdd = () => {
+    setRecord(null);
+    toggleAdd();
+  };
 
   return (
-    <React.Fragment>
+    <div className=" overflow-auto">
       <BreadCrumb title="Skills" pageTitle="Users" />
 
       <ToastContainer closeButton={false} limit={1} />
@@ -83,7 +116,7 @@ const Skills = () => {
         <div className="lg:col-span-3 lg:col-start-10 my-4">
           <div className="flex gap-2 lg:justify-end">
             <button
-              onClick={toggleAdd}
+              onClick={handleAdd}
               type="button"
               className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
             >
@@ -99,11 +132,11 @@ const Skills = () => {
               <table className="w-full">
                 <thead className="ltr:text-left rtl:text-right ">
                   <tr>
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Name
                     </th>
 
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Action
                     </th>
                   </tr>
@@ -123,17 +156,27 @@ const Skills = () => {
                     <>
                       {data?.data?.map((record) => (
                         <tr key={record._id}>
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
                             {record.name}
                           </td>
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
+                            <button
+                              type="reset"
+                              data-modal-close="addDocuments"
+                              className="text-custom-500 bg-white btn hover:text-custom-500 hover:bg-custom-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+                              onClick={() => {
+                                onEdit(record);
+                              }}
+                            >
+                              Edit
+                            </button>
                             <button
                               type="reset"
                               data-modal-close="addDocuments"
                               className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
                               onClick={() => {
-                                setRecord(record)
-                                toggleDelete()
+                                setRecord(record);
+                                toggleDelete();
                               }}
                             >
                               Delete
@@ -165,43 +208,21 @@ const Skills = () => {
           <Modal.Title className="text-16">Add Skill</Modal.Title>
         </Modal.Header>
         <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-          <form action="#!" onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Skill Name
-              </label>
-              <input
-                type="text"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder="Enter Name"
-                name="name"
-                onChange={onChange}
-                value={state.name}
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                type="reset"
-                data-modal-close="addDocuments"
-                className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
-                onClick={toggleAdd}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-              >
-                {adding ? "Loading..." : "Submit"}
-              </button>
-            </div>
-          </form>
+          <SkillForm
+            onCancel={toggleAdd}
+            onSubmit={handleSubmit}
+            isLoading={adding || editing}
+            data={record}
+          />
         </Modal.Body>
       </Modal>
 
-      <DeleteModal show={showDelete} onHide={toggleDelete} onDelete={handleDelete}/>
-    </React.Fragment>
+      <DeleteModal
+        show={showDelete}
+        onHide={toggleDelete}
+        onDelete={handleDelete}
+      />
+    </div>
   );
 };
 

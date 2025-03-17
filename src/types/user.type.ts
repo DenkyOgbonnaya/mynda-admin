@@ -40,3 +40,16 @@ export interface UserProfile {
 export interface UserQuery extends PaginationQuery {
   search?: string;
 }
+
+export interface UserStat {
+  totalMyndas: number;
+  totalEmployers: number;
+  approvedMyndas: number;
+  approvedEmployers: number;
+  rejectedMyndas: number;
+  rejectedEmployers: number;
+  reviewMyndas: number;
+  reviewEmployers: number;
+  pendingMyndas: number;
+  pendingEmployers: number;
+}

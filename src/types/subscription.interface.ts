@@ -38,8 +38,8 @@ export interface JobPlan {
 
 export interface ServicePlanCreate {
   name: string;
-  interval: string;
-  price: string;
+  interval: number;
+  price: number;
 }
 
 export interface IServicePlan extends ServicePlanCreate {

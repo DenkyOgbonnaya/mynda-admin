@@ -22,7 +22,7 @@ const Account = () => {
   document.title = "Account | Mynda - React Admin & Dashboard Template";
 
   return (
-    <React.Fragment>
+    <div className=" overflow-auto">
       <Tab.Container defaultActiveKey="overviewTabs">
         <div className="mt-1 -ml-3 -mr-3 rounded-none card">
           <AccountInfo className="card-body !px-2.5" />
@@ -115,7 +115,7 @@ const Account = () => {
           )}
         </Tab.Content>
       </Tab.Container>
-    </React.Fragment>
+    </div>
   );
 };
 

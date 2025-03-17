@@ -40,6 +40,7 @@ import SubscriptionPlans from "pages/subscriptionPlans";
 import Notifications from "pages/notifications";
 import Bookings from "pages/bookings";
 import SendInvoice from "pages/send-invoice";
+import ServicePlns from "pages/servicePlans";
 
 interface RouteObject {
   path: string;
@@ -68,7 +69,8 @@ const authProtectedRoutes: Array<RouteObject> = [
   { path: "/notifications", component: Notifications },
   { path: "/bookings", component: Bookings },
   { path: "/send-invoice", component: SendInvoice },
-  { path: "/login", component: Login },
+  { path: "/service-plans", component: ServicePlns },
+  // { path: "/login", component: Login },
 
   // pages
   { path: "/pages-account/:id", component: Account },

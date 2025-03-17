@@ -11,7 +11,7 @@ const OverviewTabs = () => {
 
   if (isLoading) return <p>Loading...</p>;
   return (
-    <React.Fragment>
+    <div className=" overflow-auto">
       <div className="flex flex-col">
         <div className="2xl:col-span-9">
           <div className="card">
@@ -191,7 +191,7 @@ const OverviewTabs = () => {
           />
         </div>
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

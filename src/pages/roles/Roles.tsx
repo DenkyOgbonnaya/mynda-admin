@@ -9,22 +9,17 @@ import DeleteModal from "Common/DeleteModal";
 // Formik
 
 import { ToastContainer, toast } from "react-toastify";
-import useInputChange from "hooks/useInputChange";
 import { useMutation, useQueryClient } from "react-query";
-import { addRole, deleteSkill } from "services/general.service";
+import { addRole, deleteRole, editRole } from "services/general.service";
 import { Role } from "types/general.interface";
 import useRoles from "hooks/useRoles";
+import RoleForm from "./RoleForm";
 
 const Roles = () => {
-
   const { data } = useRoles();
   const [showAdd, setShowAdd] = useState(false);
-  const { state, onChange } = useInputChange<Role>({
-    name: "",
-    description: '',
-    title: ""
-  });
-  const [record] = useState<any >(null)
+  const [record, setRecord] = useState<Role | null>(null);
+
   const [showDelete, setShowDelete] = useState(false);
 
   const queryClient = useQueryClient();
@@ -43,13 +38,27 @@ const Roles = () => {
     }
   );
 
-  const {  mutate:deleteMutate } = useMutation(
-    async () => await deleteSkill(record?._id),
+  const { mutate: deleteMutate } = useMutation(
+    async (id: string) => await deleteRole(id),
     {
       onSuccess(data) {
         toast.success(data?.message);
         queryClient.invalidateQueries();
         toggleDelete();
+      },
+      onError(error: any) {
+        toast.error(error?.response?.data?.message);
+      },
+    }
+  );
+
+  const { isLoading: editing, mutate: editMutate } = useMutation(
+    async (input: Role) => await editRole(record?._id!, input),
+    {
+      onSuccess(data) {
+        toast.success(data?.message);
+        queryClient.invalidateQueries();
+        toggleAdd();
       },
       onError(error: any) {
         toast.error(error?.response?.data?.message);
@@ -64,14 +73,33 @@ const Roles = () => {
     setShowDelete(!showDelete);
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    mutate(state);
+  const handleSubmit = (data: Role) => {
+    if (record) {
+      const payload: Role = {
+        ...data,
+      };
+      editMutate(payload);
+    } else {
+      const payload: Role = {
+        ...data,
+      };
+      mutate(payload);
+    }
   };
 
   const handleDelete = () => {
-    deleteMutate()
-  }
+    if (record) deleteMutate(record._id!);
+  };
+
+  const onEdit = (role: Role) => {
+    setRecord(role);
+    toggleAdd();
+  };
+
+  const handleAdd = () => {
+    setRecord(null);
+    toggleAdd();
+  };
 
   return (
     <React.Fragment>
@@ -82,7 +110,7 @@ const Roles = () => {
         <div className="lg:col-span-3 lg:col-start-10 my-4">
           <div className="flex gap-2 lg:justify-end">
             <button
-              onClick={toggleAdd}
+              onClick={handleAdd}
               type="button"
               className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
             >
@@ -98,14 +126,14 @@ const Roles = () => {
               <table className="w-full">
                 <thead className="ltr:text-left rtl:text-right ">
                   <tr>
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Name
                     </th>
 
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Title
                     </th>
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Description
                     </th>
                   </tr>
@@ -125,28 +153,38 @@ const Roles = () => {
                     <>
                       {data?.data?.map((record) => (
                         <tr key={record._id}>
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
                             {record.name}
                           </td>
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
                             {record.title}
                           </td>
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
                             {record.description}
                           </td>
-                          {/* <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
+                            <button
+                              type="reset"
+                              data-modal-close="addDocuments"
+                              className="text-custom-500 bg-white btn hover:text-custom-500 hover:bg-custom-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+                              onClick={() => {
+                                onEdit(record);
+                              }}
+                            >
+                              Edit
+                            </button>
                             <button
                               type="reset"
                               data-modal-close="addDocuments"
                               className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
                               onClick={() => {
-                                setRecord(record)
-                                toggleDelete()
+                                setRecord(record);
+                                toggleDelete();
                               }}
                             >
                               Delete
                             </button>
-                          </td> */}
+                          </td>
                         </tr>
                       ))}
                     </>
@@ -173,70 +211,20 @@ const Roles = () => {
           <Modal.Title className="text-16">Add Role</Modal.Title>
         </Modal.Header>
         <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-          <form action="#!" onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder="Mynda,Agency,Employer or Laboratory"
-                name="name"
-                onChange={onChange}
-                value={state.name}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Title
-              </label>
-              <input
-                type="text"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder="Enter Title"
-                name="title"
-                onChange={onChange}
-                value={state.title}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Description
-              </label>
-              <input
-                type="text"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder="Enter Description"
-                name="description"
-                onChange={onChange}
-                value={state.description}
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                type="reset"
-                data-modal-close="addDocuments"
-                className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
-                onClick={toggleAdd}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-              >
-                {adding ? "Loading..." : "Submit"}
-              </button>
-            </div>
-          </form>
+          <RoleForm
+            onCancel={toggleAdd}
+            onSubmit={handleSubmit}
+            isLoading={adding}
+            data={record}
+          />
         </Modal.Body>
       </Modal>
 
-      <DeleteModal show={showDelete} onHide={toggleDelete} onDelete={handleDelete}/>
+      <DeleteModal
+        show={showDelete}
+        onHide={toggleDelete}
+        onDelete={handleDelete}
+      />
     </React.Fragment>
   );
 };

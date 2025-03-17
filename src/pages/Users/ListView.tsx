@@ -1,124 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import BreadCrumb from "Common/BreadCrumb";
 import { useNavigate } from "react-router-dom";
 
 // Icons
 import { Search, CheckCircle, Loader, X } from "lucide-react";
 
-// react-redux
-import { useDispatch, useSelector } from "react-redux";
-import { createSelector } from "reselect";
-
-// Formik
-import * as Yup from "yup";
-import { useFormik } from "formik";
-
-import {
-  getUserList as onGetUserList,
-  addUserList as onAddUserList,
-  updateUserList as onUpdateUserList,
-  deleteUserList as onDeleteUserList,
-} from "slices/thunk";
 import { ToastContainer } from "react-toastify";
-import filterDataBySearch from "Common/filterDataBySearch";
 import useUsers from "hooks/useUsers";
 import { User } from "types/user.type";
+import useUserStats from "hooks/useUserStats";
 
 const ListView = () => {
-  const dispatch = useDispatch<any>();
   const { data, isLoading, onQueryChange } = useUsers();
 
-  const selectDataList = createSelector(
-    (state: any) => state.Users,
-    (user) => ({
-      userList: user.userList,
-    })
-  );
-
-  const { userList } = useSelector(selectDataList);
-  const [user, setUser] = useState<any>([]);
-  const [eventData, setEventData] = useState<any>();
-
-  const [show, setShow] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const { data: userStats } = useUserStats();
 
   const navigate = useNavigate();
-
-  // Get Data
-  useEffect(() => {
-    dispatch(onGetUserList());
-  }, [dispatch]);
-
-  useEffect(() => {
-    setUser(userList);
-  }, [userList]);
-
-  // validation
-  const validation: any = useFormik({
-    // enableReinitialize : use this flag when initial values needs to be changed
-    enableReinitialize: true,
-
-    initialValues: {
-      img: (eventData && eventData.img) || "",
-      userId: (eventData && eventData.userId) || "",
-      name: (eventData && eventData.name) || "",
-      designation: (eventData && eventData.designation) || "",
-      location: (eventData && eventData.location) || "",
-      email: (eventData && eventData.email) || "",
-      phoneNumber: (eventData && eventData.phoneNumber) || "",
-      joiningDate: (eventData && eventData.joiningDate) || "",
-      status: (eventData && eventData.status) || "",
-    },
-    validationSchema: Yup.object({
-      img: Yup.string().required("Please Add Image"),
-      name: Yup.string().required("Please Enter Name"),
-      designation: Yup.string().required("Please Enter Designation"),
-      location: Yup.string().required("Please Enter Location"),
-      email: Yup.string().required("Please Enter Email"),
-      phoneNumber: Yup.string().required("Please Enter Phone Number"),
-      joiningDate: Yup.string().required("Please Enter Joining Date"),
-      status: Yup.string().required("Please Enter Status"),
-    }),
-
-    onSubmit: (values) => {
-      if (isEdit) {
-        const updateUser = {
-          id: eventData ? eventData.id : 0,
-          ...values,
-        };
-        // update user
-        dispatch(onUpdateUserList(updateUser));
-      } else {
-        const newUser = {
-          ...values,
-          id: (Math.floor(Math.random() * (30 - 20)) + 20).toString(),
-          userId:
-            "#TW15000" +
-            (Math.floor(Math.random() * (30 - 20)) + 20).toString(),
-        };
-        // save new user
-        dispatch(onAddUserList(newUser));
-      }
-      toggle();
-    },
-  });
-
-  // Image
-  const [selectedImage, setSelectedImage] = useState<any>();
-
-  const toggle = useCallback(() => {
-    if (show) {
-      setShow(false);
-      setEventData("");
-      setIsEdit(false);
-      setSelectedImage("");
-    } else {
-      setShow(true);
-      setEventData("");
-      setSelectedImage("");
-      validation.resetForm();
-    }
-  }, [show, validation]);
 
   // columns
   const Status = ({ item }: any) => {
@@ -169,6 +66,62 @@ const ListView = () => {
   return (
     <React.Fragment>
       <BreadCrumb title="List View" pageTitle="Users" />
+
+      <div className=" w-full  p-4  rounded-md flex flex-wrap items-center mb-4 gap-4">
+        <div className=" flex flex-col gap-3 shadow-sm rounded-md p-4  px-8 bg-white w-full lg:w-[20%]">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.totalMyndas ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Total Mynda's</span>
+        </div>
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md ">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.totalEmployers ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Total Employers</span>
+        </div>
+
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.approvedMyndas ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Approved Mynda's</span>
+        </div>
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.approvedEmployers ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Approved Employers</span>
+        </div>
+
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.reviewMyndas ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Pending Mynda's Review</span>
+        </div>
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.reviewEmployers ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">
+            Awaiting Employers Review
+          </span>
+        </div>
+
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.rejectedMyndas ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Rejected Mynda's</span>
+        </div>
+        <div className=" flex flex-col gap-3 shadow-sm  p-4 w-full lg:w-[20%] px-8 bg-white rounded-md">
+          <span className=" font-bold text-lg">
+            {userStats?.data?.rejectedEmployers ?? 0}
+          </span>
+          <span className=" text-sm text-gray-400">Rejected Employers</span>
+        </div>
+      </div>
 
       <ToastContainer closeButton={false} limit={1} />
       <div className="grid grid-cols-1 gap-x-5 xl:grid-cols-12">

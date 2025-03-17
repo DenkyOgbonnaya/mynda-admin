@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { useState } from "react";
 import BreadCrumb from "Common/BreadCrumb";
 
 // Icons
@@ -10,25 +10,26 @@ import DeleteModal from "Common/DeleteModal";
 
 import { ToastContainer, toast } from "react-toastify";
 import { useMutation, useQueryClient } from "react-query";
-import { JobPlan, SubscriptionPlan } from "types/subscription.interface";
+import { IServicePlan, ServicePlanCreate } from "types/subscription.interface";
 import {
-  addSubPlan,
-  deleteSubPlan,
-  editSubPlan,
+  addServicePlan,
+  deleteServicePlan,
+  editServicePlan,
 } from "services/subscription.service";
-import JobPlanForm from "./components/jobPlanForm";
-import useSubscriptionPlans from "hooks/useSubscriptionPlans";
 
-const SubscriptionPlans = () => {
-  const { data } = useSubscriptionPlans("Employer");
+import ServicePlanForm from "./components/servicePlanForm";
+import useServicePlans from "hooks/useServicePlans";
+
+const ServicePlans = () => {
+  const { data } = useServicePlans();
   const [showAdd, setShowAdd] = useState(false);
-  const [record, setRecord] = useState<SubscriptionPlan | null>(null);
+  const [record, setRecord] = useState<IServicePlan | null>(null);
   const [showDelete, setShowDelete] = useState(false);
 
   const queryClient = useQueryClient();
 
   const { isLoading: adding, mutate } = useMutation(
-    async (input: SubscriptionPlan) => await addSubPlan(input),
+    async (input: ServicePlanCreate) => await addServicePlan(input),
     {
       onSuccess(data) {
         toast.success(data?.message);
@@ -41,7 +42,8 @@ const SubscriptionPlans = () => {
     }
   );
   const { isLoading: editing, mutate: editJobMutate } = useMutation(
-    async (input: SubscriptionPlan) => await editSubPlan(record?._id!, input),
+    async (input: ServicePlanCreate) =>
+      await editServicePlan(record?._id!, input),
     {
       onSuccess(data) {
         toast.success(data?.message);
@@ -55,7 +57,7 @@ const SubscriptionPlans = () => {
   );
 
   const { mutate: deleteMutate } = useMutation(
-    async () => await deleteSubPlan(record?._id!),
+    async () => await deleteServicePlan(record?._id!),
     {
       onSuccess(data) {
         toast.success(data?.message);
@@ -79,22 +81,26 @@ const SubscriptionPlans = () => {
     setShowDelete(!showDelete);
   };
 
-  const handleSubmit = (data: SubscriptionPlan) => {
+  const handleSubmit = (data: ServicePlanCreate) => {
     if (record) {
-      const payload: SubscriptionPlan = {
+      const payload: ServicePlanCreate = {
         ...data,
-        role: ["Mynda", "Employer", "Agency", "Laboratory"],
+
+        // @ts-ignore
         price: data.price ? Number(data.price) : 0,
-        duration: data.duration ? Number(data.duration) : 0,
+        // @ts-ignore
+        interval: data.interval ? Number(data.interval) : 0,
       };
       editJobMutate(payload);
     } else {
-      const payload: SubscriptionPlan = {
+      const payload: ServicePlanCreate = {
         ...data,
         // @ts-ignore
         price: data.price ? Number(data.price) : 0,
-        duration: data.duration ? Number(data.duration) : 0,
+        // @ts-ignore
+        interval: data.interval ? Number(data.interval) : 0,
       };
+
       mutate(payload);
     }
   };
@@ -103,14 +109,14 @@ const SubscriptionPlans = () => {
     deleteMutate();
   };
 
-  const onEdit = (plan: SubscriptionPlan) => {
+  const onEdit = (plan: IServicePlan) => {
     setRecord(plan);
     toggleAdd();
   };
 
   return (
     <React.Fragment>
-      <BreadCrumb title="Subscription Plans" pageTitle="Users" />
+      <BreadCrumb title="Service Plans" pageTitle="Service plans" />
 
       <ToastContainer closeButton={false} limit={1} />
       <div className="grid grid-cols-1 gap-x-5 xl:grid-cols-12">
@@ -143,13 +149,7 @@ const SubscriptionPlans = () => {
                     <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Interval
                     </th>
-                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
-                      Duration
-                    </th>
 
-                    <th className="px-3.5 py-2.5 border border-gray-200font-semibold">
-                      Description
-                    </th>
                     <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Action
                     </th>
@@ -173,18 +173,13 @@ const SubscriptionPlans = () => {
                           <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
                             {record.name}
                           </td>
-                          <td className="px-3.5 py-2.5 border   dark:border-custom-800">
-                            {record.interval}
-                          </td>
+
                           <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
                             N{record.price}
                           </td>
-                          <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
-                            {record.duration} Days
-                          </td>
 
-                          <td className="px-3.5 py-2.5 border   dark:border-custom-800">
-                            {record.description}
+                          <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
+                            {record.interval} Days
                           </td>
 
                           <td className="px-3.5 py-2.5 border  border-gray-200 dark:border-custom-800">
@@ -236,7 +231,7 @@ const SubscriptionPlans = () => {
           <Modal.Title className="text-16">Add Plan</Modal.Title>
         </Modal.Header>
         <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-          <JobPlanForm
+          <ServicePlanForm
             data={record!}
             onSubmit={handleSubmit}
             onCancel={toggleAdd}
@@ -254,4 +249,4 @@ const SubscriptionPlans = () => {
   );
 };
 
-export default SubscriptionPlans;
+export default ServicePlans;

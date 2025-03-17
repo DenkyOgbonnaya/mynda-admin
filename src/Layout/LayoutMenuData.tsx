@@ -20,6 +20,7 @@ import {
   PieChart,
   RadioTower,
   ScrollText,
+  SettingsIcon,
   Share2,
   ShoppingBag,
   Table,
@@ -132,6 +133,12 @@ const menuData: any = [
     label: "Subscription Plans",
     link: "/subscription-plans",
     icon: <ShoppingBag />,
+  },
+  {
+    id: "servicePlans",
+    label: "Service Plans",
+    link: "/service-plans",
+    icon: <SettingsIcon />,
   },
   {
     id: "job",

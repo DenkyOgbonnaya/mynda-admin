@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { useState } from "react";
 import BreadCrumb from "Common/BreadCrumb";
 
 // Icons
@@ -9,27 +9,22 @@ import DeleteModal from "Common/DeleteModal";
 // Formik
 
 import { ToastContainer, toast } from "react-toastify";
-import useInputChange from "hooks/useInputChange";
 import { useMutation, useQueryClient } from "react-query";
 import {
-  addRole,
   addServiceCategories,
-  deleteSkill,
+  deleteCategory,
+  editCategory,
 } from "services/general.service";
-import { Role, ServiceCategory } from "types/general.interface";
+import { ServiceCategory } from "types/general.interface";
 import useServiceCategories from "hooks/userServiceCategories";
-import { uploadeFile } from "services/file.service";
+
+import CategoryForm from "./CategoryForm";
 
 const ServiceCategoryList = () => {
   const { data } = useServiceCategories();
+  const [record, setRecord] = useState<ServiceCategory | null>(null);
   const [showAdd, setShowAdd] = useState(false);
-  const { state, onChange, onChangeByNameValue } =
-    useInputChange<ServiceCategory>({
-      name: "",
-      description: "",
-      coverPhoto: undefined,
-    });
-  const [record] = useState<any>(null);
+
   const [showDelete, setShowDelete] = useState(false);
 
   const queryClient = useQueryClient();
@@ -48,19 +43,27 @@ const ServiceCategoryList = () => {
     }
   );
 
-  const { mutate: uploadMutate } = useMutation(
-    async (file: FormData) => await uploadeFile(file),
+  const { mutate: deleteMutate } = useMutation(
+    async (id: string) => await deleteCategory(id),
     {
       onSuccess(data) {
-        const file: ServiceCategory["coverPhoto"] = {
-          name: data?.data.fileName || "any",
-          url: data?.data.url,
-          id: data?.data.id,
-          size: data?.data.size,
-        };
-
-        onChangeByNameValue("coverPhoto", file);
         toast.success(data?.message);
+        queryClient.invalidateQueries();
+        toggleDelete();
+      },
+      onError(error: any) {
+        toast.error(error?.response?.data?.message);
+      },
+    }
+  );
+
+  const { isLoading: editing, mutate: editMutate } = useMutation(
+    async (input: ServiceCategory) => await editCategory(record?._id!, input),
+    {
+      onSuccess(data) {
+        toast.success(data?.message);
+        queryClient.invalidateQueries();
+        toggleAdd();
       },
       onError(error: any) {
         toast.error(error?.response?.data?.message);
@@ -75,37 +78,44 @@ const ServiceCategoryList = () => {
     setShowDelete(!showDelete);
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    mutate(state);
-  };
-
-  const handleDelete = () => {
-    // deleteMutate()
-  };
-
-  const handleUplaod = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const formData = new FormData();
-      const file = e.target.files[0];
-
-      formData.append("file", file);
-      // console.log(file,"FILEss", formData.get("file"))
-
-      uploadMutate(formData);
+  const handleSubmit = (data: ServiceCategory) => {
+    if (record) {
+      const payload: ServiceCategory = {
+        ...data,
+      };
+      editMutate(payload);
+    } else {
+      const payload: ServiceCategory = {
+        ...data,
+      };
+      mutate(payload);
     }
   };
 
+  const handleDelete = () => {
+    if (record) deleteMutate(record._id!);
+  };
+
+  const onEdit = (role: ServiceCategory) => {
+    setRecord(role);
+    toggleAdd();
+  };
+
+  const handleAdd = () => {
+    setRecord(null);
+    toggleAdd();
+  };
+
   return (
-    <React.Fragment>
+    <div className=" overflow-auto">
       <BreadCrumb title="Service Category" pageTitle="Users" />
 
       <ToastContainer closeButton={false} limit={1} />
-      <div className="grid grid-cols-1 gap-x-5 xl:grid-cols-12">
+      <div className="grid grid-cols-1 gap-x-5 xl:grid-cols-12 ">
         <div className="lg:col-span-3 lg:col-start-10 my-4">
           <div className="flex gap-2 lg:justify-end">
             <button
-              onClick={toggleAdd}
+              onClick={handleAdd}
               type="button"
               className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
             >
@@ -121,11 +131,11 @@ const ServiceCategoryList = () => {
               <table className="w-full">
                 <thead className="ltr:text-left rtl:text-right ">
                   <tr>
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Name
                     </th>
 
-                    <th className="px-3.5 py-2.5 border border-custom-500 font-semibold">
+                    <th className="px-3.5 py-2.5 border border-gray-200 font-semibold">
                       Description
                     </th>
                   </tr>
@@ -145,26 +155,36 @@ const ServiceCategoryList = () => {
                     <>
                       {data?.data?.map((record) => (
                         <tr key={record._id}>
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
                             {record.name}
                           </td>
 
-                          <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
                             {record.description}
                           </td>
-                          {/* <td className="px-3.5 py-2.5 border  border-custom-500 dark:border-custom-800">
+                          <td className="px-3.5 py-2.5 border  border-gray-200">
+                            <button
+                              type="reset"
+                              data-modal-close="addDocuments"
+                              className="text-custom-500 bg-white btn hover:text-custom-500 hover:bg-custom-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+                              onClick={() => {
+                                onEdit(record);
+                              }}
+                            >
+                              Edit
+                            </button>
                             <button
                               type="reset"
                               data-modal-close="addDocuments"
                               className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
                               onClick={() => {
-                                setRecord(record)
-                                toggleDelete()
+                                setRecord(record);
+                                toggleDelete();
                               }}
                             >
                               Delete
                             </button>
-                          </td> */}
+                          </td>
                         </tr>
                       ))}
                     </>
@@ -191,67 +211,12 @@ const ServiceCategoryList = () => {
           <Modal.Title className="text-16">Add Category</Modal.Title>
         </Modal.Header>
         <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Name
-              </label>
-              <input
-                type="text"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder=""
-                name="name"
-                onChange={onChange}
-                value={state.name}
-                required={true}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Cover Photo
-              </label>
-              <input
-                type="file"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder=""
-                name="coverPhoto"
-                onChange={handleUplaod}
-                required={true}
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="inline-block mb-2 text-base font-medium">
-                Description
-              </label>
-              <input
-                type="text"
-                className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                placeholder="Enter Description"
-                name="description"
-                onChange={onChange}
-                value={state.description}
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                type="reset"
-                data-modal-close="addDocuments"
-                className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
-                onClick={toggleAdd}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-              >
-                {adding ? "Loading..." : "Submit"}
-              </button>
-            </div>
-          </form>
+          <CategoryForm
+            onCancel={toggleAdd}
+            onSubmit={handleSubmit}
+            isLoading={adding}
+            data={record}
+          />
         </Modal.Body>
       </Modal>
 
@@ -260,7 +225,7 @@ const ServiceCategoryList = () => {
         onHide={toggleDelete}
         onDelete={handleDelete}
       />
-    </React.Fragment>
+    </div>
   );
 };
 
