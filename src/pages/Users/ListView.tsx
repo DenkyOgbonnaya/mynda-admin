@@ -3,19 +3,44 @@ import BreadCrumb from "Common/BreadCrumb";
 import { useNavigate } from "react-router-dom";
 
 // Icons
-import { Search, CheckCircle, Loader, X } from "lucide-react";
+import { Search, CheckCircle, Loader, X, Plus } from "lucide-react";
 
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import useUsers from "hooks/useUsers";
-import { User } from "types/user.type";
+import { User, UserCreate } from "types/user.type";
 import useUserStats from "hooks/useUserStats";
+import Modal from "Common/Components/Modal";
+import AgentForm from "./AgentForm";
+import { useMutation, useQueryClient } from "react-query";
+import { createAgent } from "services/user.service";
 
 const ListView = () => {
+  const [showForm, setShowForm] = useState(false);
   const { data, isLoading, onQueryChange } = useUsers();
+
+  const queryClient = useQueryClient();
 
   const { data: userStats } = useUserStats();
 
+  const { isLoading: creating, mutate } = useMutation(
+    async (input: UserCreate) => await createAgent(input),
+    {
+      onSuccess(data) {
+        toast.success(data?.message);
+        queryClient.invalidateQueries();
+        toggleAdd();
+      },
+      onError(error: any) {
+        toast.error(error?.response?.data?.message);
+      },
+    }
+  );
+
   const navigate = useNavigate();
+
+  const handleSubmit = (data: UserCreate) => {
+    mutate(data);
+  };
 
   // columns
   const Status = ({ item }: any) => {
@@ -63,9 +88,25 @@ const ListView = () => {
     onQueryChange("search", page);
   };
 
+  const toggleAdd = () => {
+    setShowForm(!showForm);
+  };
+
   return (
     <React.Fragment>
-      <BreadCrumb title="List View" pageTitle="Users" />
+      <BreadCrumb title="Registered users" pageTitle="Mynda" />
+      <div className="lg:col-span-3 lg:col-start-10 my-4">
+        <div className="flex gap-2 lg:justify-end">
+          <button
+            onClick={toggleAdd}
+            type="button"
+            className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+          >
+            <Plus className="inline-block size-4" />{" "}
+            <span className="align-middle">Create Agent</span>
+          </button>
+        </div>
+      </div>
 
       <div className=" w-full  p-4  rounded-md flex flex-wrap items-center mb-4 gap-4">
         <div className=" flex flex-col gap-3 shadow-sm rounded-md p-4  px-8 bg-white w-full lg:w-[20%]">
@@ -193,7 +234,8 @@ const ListView = () => {
                             {user.phoneNumber}
                           </td>
                           <td className="px-3.5 py-2.5  border-custom-500 dark:border-custom-800">
-                            {new Date(user.createdAt).toLocaleDateString()}
+                            {new Date(user.createdAt).toLocaleDateString()}{" "}
+                            {new Date(user.createdAt).toLocaleTimeString()}
                           </td>
                           <td className="px-3.5 py-2.5  border-custom-500 dark:border-custom-800">
                             <Status item={user.kycStatus} />
@@ -227,6 +269,28 @@ const ListView = () => {
           </div>
         </div>
       </div>
+      <Modal
+        show={showForm}
+        onHide={toggleAdd}
+        id="defaultModal"
+        modal-center="true"
+        className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
+        dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600"
+      >
+        <Modal.Header
+          className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
+          closeButtonClass="transition-all duration-200 ease-linear text-slate-500 hover:text-red-500"
+        >
+          <Modal.Title className="text-16">Create Agent</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
+          <AgentForm
+            onCancel={toggleAdd}
+            onSubmit={handleSubmit}
+            isLoading={creating}
+          />
+        </Modal.Body>
+      </Modal>
     </React.Fragment>
   );
 };

@@ -22,8 +22,12 @@ import SkillForm from "./SkillForm";
 const Skills = () => {
   const { data, isLoading } = useSkills("");
   const [showAdd, setShowAdd] = useState(false);
-  const { state, onChange } = useInputChange<{ name: string }>({
+  const { state, onChange } = useInputChange<{
+    name: string;
+    category: string;
+  }>({
     name: "",
+    category: "",
   });
   const [record, setRecord] = useState<any>(null);
   const [showDelete, setShowDelete] = useState(false);

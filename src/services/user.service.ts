@@ -1,8 +1,13 @@
 import { PaginationDataRes, PaginationQuery } from "types/http.type";
-import { handleGetRequest, handlePutRequest } from "./http.service";
+import {
+  handleGetRequest,
+  handlePostRequest,
+  handlePutRequest,
+} from "./http.service";
 import {
   KycStatus,
   User,
+  UserCreate,
   UserProfile,
   UserQuery,
   UserStat,
@@ -54,4 +59,8 @@ export const verifyUser = async (
 
 export const getUserStat = async () => {
   return await handleGetRequest<UserStat>(`/admins/user-stat`);
+};
+
+export const createAgent = async (payload: UserCreate) => {
+  return await handlePostRequest<UserCreate, null>("/admins/agency", payload);
 };

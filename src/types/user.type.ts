@@ -53,3 +53,23 @@ export interface UserStat {
   pendingMyndas: number;
   pendingEmployers: number;
 }
+
+export interface UserUpdate {
+  firstName?: string;
+  lastName?: string;
+  fullName: string;
+  middleName?: string;
+}
+
+export interface UserCreate extends UserUpdate {
+  phoneNumber?: string;
+  email: string;
+  role: string;
+  password: string;
+  confirmPassword: string;
+  countryDialCode?: string;
+  country?: string;
+  refferalCode?: string;
+  state: string;
+  lga: string;
+}

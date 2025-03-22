@@ -1,4 +1,5 @@
 import useInputChange from "hooks/useInputChange";
+import useServiceCategories from "hooks/userServiceCategories";
 import { FormEvent, useEffect } from "react";
 import { Skill, SkillCreate } from "types/general.interface";
 
@@ -18,6 +19,8 @@ export default function SkillForm({
     serviceCategory: "",
     name: "",
   });
+
+  const { data: categories } = useServiceCategories();
 
   useEffect(() => {
     if (data) {
@@ -43,6 +46,25 @@ export default function SkillForm({
           onChange={onChange}
           value={state.name}
         />
+      </div>
+      <div className="mb-3">
+        <label className="inline-block mb-2 text-base font-medium">
+          Service Category
+        </label>
+        <select
+          className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+          name="serviceCategory"
+          onChange={onChange}
+          value={state.serviceCategory}
+          required
+        >
+          <option value="">Select Service Category</option>
+          {categories?.data?.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex justify-end gap-2 mt-4">
