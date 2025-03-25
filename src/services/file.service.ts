@@ -1,21 +1,20 @@
-import httpClient from "libs/axios.lib";
-import { handleDeleteRequest } from "./http.service";
-import { FileUploadRes } from "types/file.type";
-import { HttpResponse } from "types/http.type";
-import { AxiosResponse } from "axios";
+import { IFile } from "types/file.type";
+import { handleDeleteRequest, handlePostRequest } from "./http.service";
 
 export const uploadeFile = async (file: FormData) => {
-  const data = await httpClient.post<
-    FormData,
-    AxiosResponse<HttpResponse<FileUploadRes>>
-  >("/files/single", file, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return data.data;
+  const res = await handlePostRequest<FormData, IFile>("/files/single", file);
+
+  const fileRes: IFile = {
+    ...res.data,
+    name: "",
+  };
+
+  return {
+    data: fileRes,
+    message: res.message,
+  };
 };
 
-export const deleteFile = async (fileId: string) => {
-  return await handleDeleteRequest(`/files/${fileId}`);
+export const deleteFile = async (id: string) => {
+  return await handleDeleteRequest(`/files/${id}`);
 };

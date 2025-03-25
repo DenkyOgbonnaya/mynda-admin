@@ -35,7 +35,7 @@ export default function CategoryForm({
     {
       onSuccess(data) {
         const file: ServiceCategory["coverPhoto"] = {
-          name: data?.data.fileName || "any",
+          name: data?.data.name || "any",
           url: data?.data.url,
           id: data?.data.id,
           size: data?.data.size,

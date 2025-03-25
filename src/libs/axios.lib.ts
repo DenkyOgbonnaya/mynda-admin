@@ -1,6 +1,10 @@
 import axios, { InternalAxiosRequestConfig, AxiosRequestConfig } from "axios";
 
-import { getAccessToken, getRefreshToken } from "utills/appStorage";
+import {
+  clearAccessToken,
+  getAccessToken,
+  getRefreshToken,
+} from "utills/appStorage";
 import { BASE_URL } from "constants/env.constant";
 
 const httpClient = axios.create({
@@ -31,6 +35,7 @@ httpClient.interceptors.response.use(
   },
   async (err) => {
     if (err.response.status === 401) {
+      clearAccessToken();
       window.location.href = "/";
     }
     return Promise.reject(err);

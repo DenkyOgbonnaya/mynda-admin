@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useParams } from "react-router-dom";
 import useUserProfile from "hooks/useUserProfile";
 import IdentityVerification from "./IdentityVerification";
+import Modal from "Common/Components/Modal";
+import EmployerForm from "../Forms/EmployerForm";
 
 const EmployerOverviewTabs = () => {
   const params = useParams();
+  const [showUpdate, setShowUpdate] = useState(false);
+
+  const toggleUpdate = () => {
+    setShowUpdate(!showUpdate);
+  };
 
   const { data, isLoading } = useUserProfile(params.id!);
 
@@ -15,7 +22,15 @@ const EmployerOverviewTabs = () => {
       <div className="flex grid-cols-1 gap-x-5 2xl:grid-cols-12">
         <div className="2xl:col-span-3">
           <div className="card">
-            <div className="card-body">
+            <div className="card-body flex flex-col">
+              {!data?.data?.user?.accountVerified && (
+                <button
+                  onClick={toggleUpdate}
+                  className="text-white self-end btn my-5 bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+                >
+                  Update documents
+                </button>
+              )}
               <h6 className="mb-4 text-15">Personal Information</h6>
               <div className="overflow-x-auto">
                 <table className="w-full ltr:text-left rtl:ext-right">
@@ -129,6 +144,29 @@ const EmployerOverviewTabs = () => {
           status={data?.data?.user?.kycStatus!}
           userId={data?.data?.user?._id!}
         />
+
+        <Modal
+          show={showUpdate}
+          onHide={toggleUpdate}
+          id="defaultModal"
+          modal-center="true"
+          className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
+          dialogClassName="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600"
+        >
+          <Modal.Header
+            className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
+            closeButtonClass="transition-all duration-200 ease-linear text-slate-500 hover:text-red-500"
+          >
+            <Modal.Title className="text-16">Update Documents</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
+            <EmployerForm
+              onCancel={toggleUpdate}
+              data={data?.data?.employer!}
+              onSubmit={toggleUpdate}
+            />
+          </Modal.Body>
+        </Modal>
       </div>
     </div>
   );

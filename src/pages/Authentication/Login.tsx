@@ -20,7 +20,7 @@ import { LoginInput, LoginRes } from "types/auth.type";
 import { setAccessToken, setRefreshToken } from "utills/appStorage";
 
 const Login = (props: any) => {
-  document.title = "Login | Tailwick - React Admin & Dashboard Template";
+  document.title = "Login | Mynda  - Admin";
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
